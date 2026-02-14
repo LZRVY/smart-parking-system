@@ -3,9 +3,7 @@ pipeline {
 
   stages {
     stage('Checkout') {
-      steps {
-        checkout scm
-      }
+      steps { checkout scm }
     }
 
     stage('Setup Python') {
@@ -20,7 +18,9 @@ pipeline {
 
     stage('Run Tests') {
       steps {
-        sh 'pytest -q'
+        sh '''
+          python3 -m pytest -q
+        '''
       }
     }
   }
