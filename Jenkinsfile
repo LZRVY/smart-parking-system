@@ -1,20 +1,19 @@
 pipeline {
-  agent {
-    docker { image 'python:3.11-slim' }
-  }
+  agent any
 
   stages {
-    stage('Setup Python') {
+    stage('Checkout') {
       steps {
-        sh 'python -V'
+        checkout scm
       }
     }
 
-    stage('Install dependencies') {
+    stage('Setup Python') {
       steps {
         sh '''
-          pip install --upgrade pip
-          pip install -r requirements.txt
+          python3 -V
+          python3 -m pip install --upgrade pip
+          pip3 install -r requirements.txt
         '''
       }
     }
