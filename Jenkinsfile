@@ -1,30 +1,37 @@
 pipeline {
   agent any
 
+  options { timestamps() }
+
   stages {
     stage('Checkout') {
       steps { checkout scm }
     }
 
-    stage('Setup venv + Install deps') {
+    stage('Build + Test in Docker') {
       steps {
         sh '''
-          python3 -V
-          python3 -m venv .venv
-          . .venv/bin/activate
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          docker version
+          docker build -t smart-parking-app:dev .
+          docker run --rm smart-parking-app:dev python -m pytest -q
         '''
       }
     }
 
-    stage('Run Tests') {
+    stage('Deploy to Dev') {
       steps {
         sh '''
-          . .venv/bin/activate
-          pytest -q
+          echo "Deploying to DEV environment..."
+          docker rm -f smart-parking-dev || true
+          docker run -d --name smart-parking-dev -p 5001:5000 smart-parking-app:dev
+          echo "DEV running on http://localhost:5001"
         '''
       }
     }
   }
+
+  post {
+    always { cleanWs() }
+  }
 }
+
