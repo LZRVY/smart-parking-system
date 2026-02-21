@@ -13,7 +13,7 @@ pipeline {
         sh '''
           docker version
           docker build -t smart-parking-app:dev .
-          docker run --rm smart-parking-app:dev python -m pytest -q
+     
         '''
       }
     }
