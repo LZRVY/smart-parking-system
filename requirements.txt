@@ -1,2 +1,8 @@
+<<<<<<< HEAD
 fastapi
 uvicorn
+=======
+Flask==3.0.3
+gunicorn==22.0.0
+pytest
+>>>>>>> 
