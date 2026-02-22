@@ -27,6 +27,21 @@ pipeline {
           echo "DEV running on http://localhost:5001"
         '''
       }
+      stage('Run testRigor Tests (DEV)') {
+    steps {
+        withCredentials([string(credentialsId: 'testRigorToken', variable: 'TESTRIGOR_TOKEN')]) {
+            sh '''
+            echo "Triggering testRigor tests..."
+
+            curl -X POST \
+              -H "Content-Type: application/json" \
+              -H "auth-token: $TESTRIGOR_TOKEN" \
+              --data '{"forceCancelPreviousTesting":true}' \
+              https://api.testrigor.com/api/v1/apps/DYnF8LHyZ83AeE7vv/retest
+
+            echo "testRigor test triggered successfully"
+            '''
+        }
     }
   }
 
