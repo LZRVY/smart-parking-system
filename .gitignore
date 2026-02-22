@@ -1,17 +1,12 @@
+# macOS
 .DS_Store
+**/.DS_Store
 
+# Python
 __pycache__/
 *.pyc
-.pytest_cache/
+.venv/
+.env
 
-# macOS
-.DS_Store
-**/.DS_Store
-
-# macOS
-.DS_Store
-**/.DS_Store
-
-# macOS
-.DS_Store
-**/.DS_Store
+# Node (if ever used)
+node_modules/
