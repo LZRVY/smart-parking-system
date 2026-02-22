@@ -1,10 +1,46 @@
 console.log("app.js loaded ✅");
 
 const SPOTS = [
-  { id:"garage-a", name:"Garage A", type:"garage", pricePerHour:6, available:true, tags:["ev"], lat:40.7433, lng:-74.0288 },
-  { id:"garage-b", name:"Garage B", type:"garage", pricePerHour:5, available:false, tags:["accessible"], lat:40.7426, lng:-74.0302 },
-  { id:"street-1", name:"Street Spot 1", type:"street", pricePerHour:3, available:true, tags:[], lat:40.7419, lng:-74.0291 },
-  { id:"street-2", name:"Street Spot 2", type:"street", pricePerHour:4, available:true, tags:["accessible"], lat:40.7442, lng:-74.0273 },
+  {
+    id: "garage-a",
+    name: "Garage A",
+    type: "garage",
+    pricePerHour: 6,
+    available: true,
+    tags: ["ev"],
+    lat: 40.7433,
+    lng: -74.0288,
+  },
+  {
+    id: "garage-b",
+    name: "Garage B",
+    type: "garage",
+    pricePerHour: 5,
+    available: false,
+    tags: ["accessible"],
+    lat: 40.7426,
+    lng: -74.0302,
+  },
+  {
+    id: "street-1",
+    name: "Street Spot 1",
+    type: "street",
+    pricePerHour: 3,
+    available: true,
+    tags: [],
+    lat: 40.7419,
+    lng: -74.0291,
+  },
+  {
+    id: "street-2",
+    name: "Street Spot 2",
+    type: "street",
+    pricePerHour: 4,
+    available: true,
+    tags: ["accessible"],
+    lat: 40.7442,
+    lng: -74.0273,
+  },
 ];
 
 let activeType = "all";
@@ -18,24 +54,20 @@ const elSearch = document.getElementById("searchInput");
 const FAQ = {
   rt: {
     title: "Is this real-time availability?",
-    body:
-      "Right now it’s a demo. “Reserve” toggles availability in-memory (front-end) so you can show the full flow. Next step is a DB + API."
+    body: "Right now it’s a demo. “Reserve” toggles availability in-memory (front-end) so you can show the full flow. Next step is a DB + API.",
   },
   key: {
     title: "Do I need an API key?",
-    body:
-      "If you use Google Maps Embed like we are now, you typically don’t need a key for basic embed usage—but features are limited. For full Google Maps JavaScript API (custom markers, routing inside your UI), you’ll need an API key + billing enabled."
+    body: "If you use Google Maps Embed like we are now, you typically don’t need a key for basic embed usage—but features are limited. For full Google Maps JavaScript API (custom markers, routing inside your UI), you’ll need an API key + billing enabled.",
   },
   reserve: {
     title: "How do reservations work later?",
-    body:
-      "Add a Spots table and Reservations table. Then build endpoints like /api/spots and /api/reservations. The UI can fetch availability and create reservations, with auth and rate limits."
+    body: "Add a Spots table and Reservations table. Then build endpoints like /api/spots and /api/reservations. The UI can fetch availability and create reservations, with auth and rate limits.",
   },
   privacy: {
     title: "Do you track my location?",
-    body:
-      "Only if you allow browser location permission. If denied, we fall back to a default city and you can manually change it. In this demo, we don’t store location history."
-  }
+    body: "Only if you allow browser location permission. If denied, we fall back to a default city and you can manually change it. In this demo, we don’t store location history.",
+  },
 };
 
 function initFAQ() {
@@ -52,7 +84,7 @@ function initFAQ() {
     const item = FAQ[key];
     if (!item) return;
 
-    btns.forEach(b => {
+    btns.forEach((b) => {
       const on = b.dataset.faq === key;
       b.classList.toggle("active", on);
       b.setAttribute("aria-selected", on ? "true" : "false");
@@ -63,7 +95,7 @@ function initFAQ() {
     if (feedback) feedback.textContent = "";
   }
 
-  btns.forEach(b => {
+  btns.forEach((b) => {
     b.addEventListener("click", () => setActive(b.dataset.faq));
   });
 
@@ -96,10 +128,14 @@ const changeCityBtn = document.getElementById("changeCityBtn");
 document.getElementById("year").textContent = new Date().getFullYear();
 
 /* ---------- Google Maps embed (IN-SITE) ---------- */
+/* Corrected Google Maps embed logic */
 function setGoogleMap(lat, lng, z = 16) {
-  const src = `https://www.google.com/maps?q=${lat},${lng}&z=${z}&output=embed`;
-  if (gmap) gmap.src = src;
-  if (gmap2) gmap2.src = src;
+  const src = `https://www.google.com/maps/embed/v1/view?key=YOUR_API_KEY&center=${lat},${lng}&zoom=${z}`;
+
+  const demoSrc = `https://maps.google.com/maps?q=${lat},${lng}&z=${z}&output=embed`;
+
+  if (gmap) gmap.src = demoSrc;
+  if (gmap2) gmap2.src = demoSrc;
 }
 
 /* ---------- Location label (no more “Hoboken” hardcode) ---------- */
@@ -119,11 +155,13 @@ function detectLocation() {
   navigator.geolocation.getCurrentPosition(
     (pos) => {
       const { latitude, longitude } = pos.coords;
-      setCityLabel(`Near you • ${latitude.toFixed(3)}, ${longitude.toFixed(3)}`);
+      setCityLabel(
+        `Near you • ${latitude.toFixed(3)}, ${longitude.toFixed(3)}`,
+      );
       setGoogleMap(latitude, longitude, 15);
     },
     () => setCityLabel("Location blocked"),
-    { enableHighAccuracy: true, timeout: 7000 }
+    { enableHighAccuracy: true, timeout: 7000 },
   );
 }
 
@@ -144,7 +182,9 @@ document.querySelectorAll(".faq-q").forEach((btn) => {
     const isOpen = btn.getAttribute("aria-expanded") === "true";
 
     // close others (Uber-like)
-    document.querySelectorAll(".faq-q").forEach((b) => b.setAttribute("aria-expanded", "false"));
+    document
+      .querySelectorAll(".faq-q")
+      .forEach((b) => b.setAttribute("aria-expanded", "false"));
 
     // toggle this one
     btn.setAttribute("aria-expanded", String(!isOpen));
@@ -162,7 +202,9 @@ function matchesType(spot) {
 function matchesQuery(spot) {
   if (!query) return true;
   const q = query.toLowerCase();
-  return spot.name.toLowerCase().includes(q) || spot.type.toLowerCase().includes(q);
+  return (
+    spot.name.toLowerCase().includes(q) || spot.type.toLowerCase().includes(q)
+  );
 }
 
 function renderSpots() {
@@ -198,10 +240,12 @@ function openSpot(spotId) {
   selectedSpotId = spotId;
 
   if (modalTitle) modalTitle.textContent = spot.name;
-  if (modalMeta) modalMeta.textContent = `${spot.type.toUpperCase()} • $${spot.pricePerHour}/hr`;
+  if (modalMeta)
+    modalMeta.textContent = `${spot.type.toUpperCase()} • $${spot.pricePerHour}/hr`;
   if (modalType) modalType.textContent = spot.type;
   if (modalPrice) modalPrice.textContent = `$${spot.pricePerHour}/hr`;
-  if (modalStatus) modalStatus.textContent = spot.available ? "Available" : "Taken";
+  if (modalStatus)
+    modalStatus.textContent = spot.available ? "Available" : "Taken";
 
   // Update map in-site (like Uber flow)
   setGoogleMap(spot.lat, spot.lng, 16);
@@ -237,7 +281,9 @@ if (directionsBtn) {
 
     // Keep it IN-SITE: just focus map + scroll to it
     setGoogleMap(spot.lat, spot.lng, 16);
-    document.getElementById("spots")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document
+      .getElementById("spots")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
     closeModal();
   });
 }
@@ -248,7 +294,9 @@ if (elChips) {
     const btn = e.target.closest(".chip");
     if (!btn) return;
     activeType = btn.dataset.type || "all";
-    document.querySelectorAll(".chip").forEach((b) => b.classList.remove("chip-active"));
+    document
+      .querySelectorAll(".chip")
+      .forEach((b) => b.classList.remove("chip-active"));
     btn.classList.add("chip-active");
     renderSpots();
   });

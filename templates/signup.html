@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sign Up — SpotOn Smart Parking</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+  </head>
+  <body class="auth-page">
+    <div class="auth-card">
+      <div class="auth-header">
+        <a href="{{ url_for('home') }}" class="text-logo"
+          >Spot<span>On</span></a
+        >
+        <h1>Create an account</h1>
+        <p>Join SpotOn to reserve or manage parking.</p>
+      </div>
+
+      <form action="#" method="POST">
+        <div class="field">
+          <label style="margin-bottom: 8px">I AM A...</label>
+          <div class="role-selector">
+            <div class="role-option">
+              <input
+                type="radio"
+                id="role-driver"
+                name="role"
+                value="driver"
+                checked
+              />
+              <label for="role-driver" class="role-card">
+                <span class="role-icon">🚗</span>
+                <span class="role-title">Driver</span>
+                <span class="role-desc">Find and reserve parking spots</span>
+              </label>
+            </div>
+
+            <div class="role-option">
+              <input
+                type="radio"
+                id="role-operator"
+                name="role"
+                value="operator"
+              />
+              <label for="role-operator" class="role-card">
+                <span class="role-icon">🏢</span>
+                <span class="role-title">Operator</span>
+                <span class="role-desc">Manage a garage or facility</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>FULL NAME</label>
+          <input type="text" placeholder="John Doe" required />
+        </div>
+
+        <div class="field">
+          <label>EMAIL ADDRESS</label>
+          <input type="email" placeholder="name@example.com" required />
+        </div>
+
+        <div class="field">
+          <label>PASSWORD</label>
+          <input
+            type="password"
+            placeholder="Create a secure password"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-primary full-width"
+          style="margin-top: 16px"
+        >
+          Create Account
+        </button>
+      </form>
+
+      <div class="auth-links">
+        Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+      </div>
+    </div>
+  </body>
+</html>
