@@ -40,7 +40,7 @@ pipeline {
     echo "Triggering testRigor..."
     curl -sS -X POST \
       -H "Content-Type: application/json" \
-      -H "auth-token: $TESTRIGOR_TOKEN" \
+      -H "auth-token: $testRigorToken" \
       --data '{"forceCancelPreviousTesting":true}' \
       "https://api.testrigor.com/api/v1/apps/DYnF8LHyz83AeE7vv/retest"
     echo
