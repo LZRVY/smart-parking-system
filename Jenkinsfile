@@ -34,19 +34,18 @@ pipeline {
 
        stage('Trigger testRigor') {
   steps {
-    withCredentials([string(credentialsId: 'testRigorToken', variable: 'testRigorToken')]) {
-      sh '''
-        set -e
-        echo "Triggering testRigor..."
-        curl -sS -X POST \
-          -H "Content-Type: application/json" \
-          -H "auth-token: $TESTRIGOR_TOKEN" \
-          --data '{"forceCancelPreviousTesting":true}' \
-          https://api.testrigor.com/api/v1/apps/DYnF8LHyZ83AeE7vv/retest
-        echo ""
-        echo "testRigor triggered."
-      '''
-    }
+   withCredentials([string(credentialsId: 'TESTRIGOR_TOKEN', variable: 'TESTRIGOR_TOKEN')]) {
+  sh '''
+    set -e
+    echo "Triggering testRigor..."
+    curl -sS -X POST \
+      -H "Content-Type: application/json" \
+      -H "auth-token: $TESTRIGOR_TOKEN" \
+      --data '{"forceCancelPreviousTesting":true}' \
+      "https://api.testrigor.com/api/v1/apps/DYnF8LHyZ83AeE7vv/retest"
+    echo
+  '''
+}
   }
 }
     
