@@ -34,7 +34,7 @@ pipeline {
 
        stage('Trigger testRigor') {
   steps {
-    withCredentials([string(credentialsId: 'TESTRIGOR_TOKEN', variable: 'TESTRIGOR_TOKEN')]) {
+    withCredentials([string(credentialsId: 'testRigorToken', variable: 'testRigorToken')]) {
       sh '''
         set -e
         echo "Triggering testRigor..."
