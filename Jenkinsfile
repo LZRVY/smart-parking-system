@@ -25,6 +25,7 @@ pipeline {
           docker run -d --name smart-parking-dev -p 5001:5000 smart-parking-app:dev
           echo "DEV running on http://localhost:5001"
         '''
+         echo "Application is live at: http://13.58.211.204"
       }
     }
 
