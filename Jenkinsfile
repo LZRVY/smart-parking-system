@@ -1,55 +1,56 @@
 pipeline {
-  agent any
+    agent any
 
-  options { timestamps() }
-
-  stages {
-    stage('Checkout') {
-      steps { checkout scm }
+    environment {
+        APP_NAME = "smart-parking-app"
+        CONTAINER_NAME = "smart-parking-dev"
+        PUBLIC_URL = "http://13.58.211.204"
     }
 
-    stage('Build + Test in Docker') {
-      steps {
-        sh '''
-          docker version
-          docker build -t smart-parking-app:dev .
-        '''
-      }
-    }
+    stages {
 
-    stage('Deploy to Dev') {
-      steps {
-        sh '''
-          echo "Deploying to DEV environment..."
-          docker rm -f smart-parking-dev || true
-          docker run -d --name smart-parking-dev -p 5001:5000 smart-parking-app:dev
-          echo "DEV running on http://localhost:5001"
-        '''
-         echo "Application is live at: http://13.58.211.204"
-      }
-    }
-
-    stage('Run testRigor Tests (DEV)') {
-      steps {
-        withCredentials([string(credentialsId: 'testRigorToken', variable: 'TESTRIGOR_TOKEN')]) {
-          sh '''
-            echo "Triggering testRigor tests..."
-
-            curl -X POST \
-              -H "Content-Type: application/json" \
-              -H "auth-token: $TESTRIGOR_TOKEN" \
-              --data '{"forceCancelPreviousTesting":true}' \
-              https://api.testrigor.com/api/v1/apps/DYnF8LHyz83AeE7vv/retest
-
-            echo "testRigor test triggered successfully"
-          '''
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
         }
-      }
+
+        stage('Build Docker Image') {
+            steps {
+                sh """
+                    docker build -t ${APP_NAME}:dev .
+                """
+            }
+        }
+
+        stage('Deploy to DEV') {
+            steps {
+                sh """
+                    docker rm -f ${CONTAINER_NAME} || true
+                    docker run -d --name ${CONTAINER_NAME} -p 80:5000 ${APP_NAME}:dev
+                """
+            }
+        }
+
+        stage('Trigger testRigor') {
+            steps {
+                withCredentials([string(credentialsId: 'testRigorToken', variable: 'TOKEN')]) {
+                    sh """
+                        curl -X POST https://api.testrigor.com/api/v1/apps/DYnF8LHyZ83AeE7vv/run \
+                        -H "Authorization: Bearer ${TOKEN}" \
+                        -H "Content-Type: application/json" \
+                        -d '{}'
+                    """
+                }
+            }
+        }
     }
-  }
 
-  post {
-    always { cleanWs() }
-  }
+    post {
+        always {
+            echo "========================================"
+            echo "Application is live at: ${PUBLIC_URL}"
+            echo "========================================"
+        }
+    }
 }
-
